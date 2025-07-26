@@ -1163,8 +1163,12 @@ src="https://www.facebook.com/tr?id=482675157669768&ev=PageView&noscript=1"
         @media (min-width: 993px) {
             .homepage-products-grid, .products-grid { 
                 grid-template-columns: repeat(3, 1fr); 
+                gap: 1.5rem;
             }
-            .related-products-grid { grid-template-columns: repeat(3, 1fr); }
+            .related-products-grid {
+                grid-template-columns: repeat(3, 1fr);
+                gap: 1.5rem;
+            }
             .homepage-products-grid .skeleton-card:nth-child(n+4) { display: none; }
         }
         @media (min-width: 769px) and (max-width: 992px) {
