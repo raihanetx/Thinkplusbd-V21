@@ -1115,18 +1115,15 @@ src="https://www.facebook.com/tr?id=482675157669768&ev=PageView&noscript=1"
             .product-actions button { width: 100%; margin-bottom: 0.45rem; }
             .product-actions button:last-child { margin-bottom: 0; }
             .product-detail-container {
-                display: grid;
-                grid-template-columns: 1fr 1fr;
-                gap: 1rem;
-            }
-            .product-detail-main-image-container {
-                grid-column: 2 / 3;
-                grid-row: 1 / 2;
-                aspect-ratio: 4 / 3;
+                display: flex;
+                flex-direction: column;
             }
             .product-detail-info {
-                grid-column: 1 / 2;
-                grid-row: 1 / 2;
+                order: 1;
+            }
+            .product-detail-main-image-container {
+                order: 2;
+                aspect-ratio: 4 / 3;
             }
             .product-detail-title { white-space: normal; overflow: visible; text-overflow: initial; }
             .product-listings.container { padding-left: 0.9rem; padding-right: 0.9rem; padding-top: 0.45rem; padding-bottom: 0.45rem; }
@@ -2366,10 +2363,9 @@ src="https://www.facebook.com/tr?id=482675157669768&ev=PageView&noscript=1"
 
             detailPageElement.innerHTML = `
                 <div class="product-detail-container">
-                    <div class="product-detail-main-image-container">${tempImageDiv.innerHTML}</div>
                     <div class="product-detail-info">
                         <h2 class="product-detail-title">${product.name || 'N/A'}</h2>
-                        <p class="product-detail-description">${shortDescription}</p>
+                        <p class="product-detail-description-short">${shortDescription}</p>
                         <div class="product-detail-price">৳${currentPrice.toFixed(2)}</div>
                         ${durationSelectorHTML}
                         <div class="product-detail-actions">
@@ -2377,6 +2373,7 @@ src="https://www.facebook.com/tr?id=482675157669768&ev=PageView&noscript=1"
                             <button class="add-to-cart-detail">Add to Cart</button>
                         </div>
                     </div>
+                    <div class="product-detail-main-image-container">${tempImageDiv.innerHTML}</div>
                 </div>
 
                 <div class="product-detail-tabs">
@@ -2470,15 +2467,53 @@ src="https://www.facebook.com/tr?id=482675157669768&ev=PageView&noscript=1"
 
         function setupShowMore() {
             document.querySelectorAll('.expandable .show-more-btn').forEach(button => {
+                const expandable = button.parentElement;
+                const content = expandable.querySelector('.expandable-content');
+
+                if (expandable.id === 'description') {
+                    const lines = content.innerHTML.split('<br>');
+                    if (lines.length > 6) {
+                        content.innerHTML = lines.slice(0, 6).join('<br>');
+                        button.style.display = 'inline-block';
+                    } else {
+                        button.style.display = 'none';
+                    }
+                } else if (expandable.id === 'reviews') {
+                    const reviews = content.querySelectorAll('.review');
+                    if (reviews.length > 4) {
+                        for (let i = 4; i < reviews.length; i++) {
+                            reviews[i].style.display = 'none';
+                        }
+                        button.style.display = 'inline-block';
+                    } else {
+                        button.style.display = 'none';
+                    }
+                }
+
                 button.addEventListener('click', function() {
-                    const expandable = this.parentElement;
                     expandable.classList.toggle('expanded');
                     if (expandable.classList.contains('expanded')) {
+                        if (expandable.id === 'description') {
+                            const lines = product.longDescription.split('<br>');
+                            content.innerHTML = lines.join('<br>');
+                        } else if (expandable.id === 'reviews') {
+                            const reviews = content.querySelectorAll('.review');
+                            reviews.forEach(review => review.style.display = 'block');
+                        }
                         this.textContent = 'Show Less';
                         if (expandable.id === 'reviews') {
                             expandable.querySelector('.review-form').style.display = 'block';
                         }
                     } else {
+                        if (expandable.id === 'description') {
+                            const lines = content.innerHTML.split('<br>');
+                            content.innerHTML = lines.slice(0, 6).join('<br>');
+                        } else if (expandable.id === 'reviews') {
+                            const reviews = content.querySelectorAll('.review');
+                            for (let i = 4; i < reviews.length; i++) {
+                                reviews[i].style.display = 'none';
+                            }
+                        }
                         this.textContent = expandable.id === 'reviews' ? 'View All Reviews' : 'Show More';
                         if (expandable.id === 'reviews') {
                             expandable.querySelector('.review-form').style.display = 'none';
