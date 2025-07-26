@@ -664,10 +664,17 @@ src="https://www.facebook.com/tr?id=482675157669768&ev=PageView&noscript=1"
             align-items: center;
             margin-bottom: 0.5rem;
         }
-        .review-avatar {
+        .review-avatar-text {
             width: 40px;
             height: 40px;
             border-radius: 50%;
+            background-color: var(--primary-color);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 1.2rem;
             margin-right: 1rem;
         }
         .review-name {
@@ -1095,25 +1102,28 @@ src="https://www.facebook.com/tr?id=482675157669768&ev=PageView&noscript=1"
             .featured-section-header .category-title { font-size: 1.1rem; padding-bottom: 0; margin-right: 0.65rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
             .featured-section-header .view-all { font-size: 0.85rem; }
             .featured-section-header .view-all i { font-size: 0.75em; }
-            .homepage-products-grid, .products-grid { grid-template-columns: repeat(2, 1fr); gap: 1.1rem; }
+            .homepage-products-grid, .products-grid {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+                gap: 0.75rem;
+            }
+            .product-card {
+                width: 100%; /* Make product cards flexible */
+            }
             .homepage-products-grid .product-card:nth-child(n+3):not(.skeleton-card) { display: none; }
             .homepage-products-grid .skeleton-card:nth-child(n+3) { display: none; }
             .product-actions { flex-direction: column; align-items: stretch; }
             .product-actions button { width: 100%; margin-bottom: 0.45rem; }
             .product-actions button:last-child { margin-bottom: 0; }
             .product-detail-container {
-                display: grid;
-                grid-template-columns: 1fr 1fr;
-                gap: 1rem;
-            }
-            .product-detail-main-image-container {
-                grid-column: 2 / 3;
-                grid-row: 1 / 2;
-                aspect-ratio: 4 / 3;
+                display: flex;
+                flex-direction: column;
             }
             .product-detail-info {
-                grid-column: 1 / 2;
-                grid-row: 1 / 2;
+                order: 1;
+            }
+            .product-detail-main-image-container {
+                order: 2;
+                aspect-ratio: 4 / 3;
             }
             .product-detail-title { white-space: normal; overflow: visible; text-overflow: initial; }
             .product-listings.container { padding-left: 0.9rem; padding-right: 0.9rem; padding-top: 0.45rem; padding-bottom: 0.45rem; }
@@ -1157,8 +1167,12 @@ src="https://www.facebook.com/tr?id=482675157669768&ev=PageView&noscript=1"
         @media (min-width: 993px) {
             .homepage-products-grid, .products-grid { 
                 grid-template-columns: repeat(3, 1fr); 
+                gap: 1.5rem;
             }
-            .related-products-grid { grid-template-columns: repeat(3, 1fr); }
+            .related-products-grid {
+                grid-template-columns: repeat(3, 1fr);
+                gap: 1.5rem;
+            }
             .homepage-products-grid .skeleton-card:nth-child(n+4) { display: none; }
         }
         @media (min-width: 769px) and (max-width: 992px) {
@@ -2209,19 +2223,17 @@ src="https://www.facebook.com/tr?id=482675157669768&ev=PageView&noscript=1"
             
             let priceToDisplayNum;
             let priceDisplay;
-            let durationInfoHTML = '';
 
             if (product.durations && product.durations.length > 0) {
                 priceToDisplayNum = Math.min(...product.durations.map(d => parseFloat(d.price)));
-                 priceDisplay = `Starts at ৳${Math.floor(priceToDisplayNum)}`;
-                durationInfoHTML = `<div class="product-card-duration">${product.durations.length} options available</div>`;
+                 priceDisplay = `৳${Math.floor(priceToDisplayNum)}`;
             } else {
                 priceToDisplayNum = parseFloat(product.price);
                 priceDisplay = `৳${Math.floor(priceToDisplayNum)}`;
             }
 
             const tempDiv = document.createElement('div'); tempDiv.appendChild(imageContainer);
-            card.innerHTML = `${tempDiv.innerHTML}<div class="product-card-content"><div class="product-card-header"><h3>${product.name || 'Unnamed Product'}</h3></div><p class="description">${product.description ? nl2br(htmlspecialchars_decode(product.description)) : 'No description available.'}</p>${durationInfoHTML}<div class="price">${priceDisplay}</div><div class="product-actions">${buttonsHTML}</div></div>`;
+            card.innerHTML = `${tempDiv.innerHTML}<div class="product-card-content"><div class="product-card-header"><h3>${product.name || 'Unnamed Product'}</h3></div><p class="description">${product.description ? nl2br(htmlspecialchars_decode(product.description)) : 'No description available.'}</p><div class="price">${priceDisplay}</div><div class="product-actions">${buttonsHTML}</div></div>`;
             const buyNowButton = card.querySelector('.buy-now-card'); if (buyNowButton) { buyNowButton.addEventListener('click', (e) => { e.stopPropagation(); handleProductCardBuyNow(product.id); }); }
             const viewDetailsButton = card.querySelector('.view-details-card'); if (viewDetailsButton) { viewDetailsButton.addEventListener('click', (e) => { e.stopPropagation(); navigateTo('product', `${product.category}/${product.slug}`); }); }
             const titleElement = card.querySelector('h3'); if (titleElement) { titleElement.addEventListener('click', (e) => { e.stopPropagation(); navigateTo('product', `${product.category}/${product.slug}`); }); }
@@ -2274,10 +2286,11 @@ src="https://www.facebook.com/tr?id=482675157669768&ev=PageView&noscript=1"
                 let reviewsHTML = '';
                 if (reviews.length > 0) {
                     reviews.forEach(review => {
+                        const initial = review.name.charAt(0).toUpperCase();
                         reviewsHTML += `
                             <div class="review">
                                 <div class="review-author">
-                                    <img src="https://i.postimg.cc/4NtztqPt/IMG-20250603-130207-removebg-preview-1.png" alt="User Avatar" class="review-avatar">
+                                    <div class="review-avatar-text">${initial}</div>
                                     <span class="review-name">${review.name}</span>
                                 </div>
                                 <div class="review-rating">${'★'.repeat(review.rating)}${'☆'.repeat(5 - review.rating)}</div>
@@ -2348,10 +2361,9 @@ src="https://www.facebook.com/tr?id=482675157669768&ev=PageView&noscript=1"
 
             detailPageElement.innerHTML = `
                 <div class="product-detail-container">
-                    <div class="product-detail-main-image-container">${tempImageDiv.innerHTML}</div>
                     <div class="product-detail-info">
                         <h2 class="product-detail-title">${product.name || 'N/A'}</h2>
-                        <p class="product-detail-description">${shortDescription}</p>
+                        <p class="product-detail-description-short">${shortDescription}</p>
                         <div class="product-detail-price">৳${currentPrice.toFixed(2)}</div>
                         ${durationSelectorHTML}
                         <div class="product-detail-actions">
@@ -2359,6 +2371,7 @@ src="https://www.facebook.com/tr?id=482675157669768&ev=PageView&noscript=1"
                             <button class="add-to-cart-detail">Add to Cart</button>
                         </div>
                     </div>
+                    <div class="product-detail-main-image-container">${tempImageDiv.innerHTML}</div>
                 </div>
 
                 <div class="product-detail-tabs">
@@ -2452,15 +2465,53 @@ src="https://www.facebook.com/tr?id=482675157669768&ev=PageView&noscript=1"
 
         function setupShowMore() {
             document.querySelectorAll('.expandable .show-more-btn').forEach(button => {
+                const expandable = button.parentElement;
+                const content = expandable.querySelector('.expandable-content');
+
+                if (expandable.id === 'description') {
+                    const lines = content.innerHTML.split('<br>');
+                    if (lines.length > 6) {
+                        content.innerHTML = lines.slice(0, 6).join('<br>');
+                        button.style.display = 'inline-block';
+                    } else {
+                        button.style.display = 'none';
+                    }
+                } else if (expandable.id === 'reviews') {
+                    const reviews = content.querySelectorAll('.review');
+                    if (reviews.length > 4) {
+                        for (let i = 4; i < reviews.length; i++) {
+                            reviews[i].style.display = 'none';
+                        }
+                        button.style.display = 'inline-block';
+                    } else {
+                        button.style.display = 'none';
+                    }
+                }
+
                 button.addEventListener('click', function() {
-                    const expandable = this.parentElement;
                     expandable.classList.toggle('expanded');
                     if (expandable.classList.contains('expanded')) {
+                        if (expandable.id === 'description') {
+                            const lines = product.longDescription.split('<br>');
+                            content.innerHTML = lines.join('<br>');
+                        } else if (expandable.id === 'reviews') {
+                            const reviews = content.querySelectorAll('.review');
+                            reviews.forEach(review => review.style.display = 'block');
+                        }
                         this.textContent = 'Show Less';
                         if (expandable.id === 'reviews') {
                             expandable.querySelector('.review-form').style.display = 'block';
                         }
                     } else {
+                        if (expandable.id === 'description') {
+                            const lines = content.innerHTML.split('<br>');
+                            content.innerHTML = lines.slice(0, 6).join('<br>');
+                        } else if (expandable.id === 'reviews') {
+                            const reviews = content.querySelectorAll('.review');
+                            for (let i = 4; i < reviews.length; i++) {
+                                reviews[i].style.display = 'none';
+                            }
+                        }
                         this.textContent = expandable.id === 'reviews' ? 'View All Reviews' : 'Show More';
                         if (expandable.id === 'reviews') {
                             expandable.querySelector('.review-form').style.display = 'none';
