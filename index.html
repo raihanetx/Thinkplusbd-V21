@@ -664,10 +664,17 @@ src="https://www.facebook.com/tr?id=482675157669768&ev=PageView&noscript=1"
             align-items: center;
             margin-bottom: 0.5rem;
         }
-        .review-avatar {
+        .review-avatar-text {
             width: 40px;
             height: 40px;
             border-radius: 50%;
+            background-color: var(--primary-color);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 1.2rem;
             margin-right: 1rem;
         }
         .review-name {
@@ -2284,10 +2291,11 @@ src="https://www.facebook.com/tr?id=482675157669768&ev=PageView&noscript=1"
                 let reviewsHTML = '';
                 if (reviews.length > 0) {
                     reviews.forEach(review => {
+                        const initial = review.name.charAt(0).toUpperCase();
                         reviewsHTML += `
                             <div class="review">
                                 <div class="review-author">
-                                    <img src="https://i.postimg.cc/4NtztqPt/IMG-20250603-130207-removebg-preview-1.png" alt="User Avatar" class="review-avatar">
+                                    <div class="review-avatar-text">${initial}</div>
                                     <span class="review-name">${review.name}</span>
                                 </div>
                                 <div class="review-rating">${'★'.repeat(review.rating)}${'☆'.repeat(5 - review.rating)}</div>
