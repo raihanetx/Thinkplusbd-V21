@@ -2223,19 +2223,17 @@ src="https://www.facebook.com/tr?id=482675157669768&ev=PageView&noscript=1"
             
             let priceToDisplayNum;
             let priceDisplay;
-            let durationInfoHTML = '';
 
             if (product.durations && product.durations.length > 0) {
                 priceToDisplayNum = Math.min(...product.durations.map(d => parseFloat(d.price)));
-                 priceDisplay = `Starts at ৳${Math.floor(priceToDisplayNum)}`;
-                durationInfoHTML = `<div class="product-card-duration">${product.durations.length} options available</div>`;
+                 priceDisplay = `৳${Math.floor(priceToDisplayNum)}`;
             } else {
                 priceToDisplayNum = parseFloat(product.price);
                 priceDisplay = `৳${Math.floor(priceToDisplayNum)}`;
             }
 
             const tempDiv = document.createElement('div'); tempDiv.appendChild(imageContainer);
-            card.innerHTML = `${tempDiv.innerHTML}<div class="product-card-content"><div class="product-card-header"><h3>${product.name || 'Unnamed Product'}</h3></div><p class="description">${product.description ? nl2br(htmlspecialchars_decode(product.description)) : 'No description available.'}</p>${durationInfoHTML}<div class="price">${priceDisplay}</div><div class="product-actions">${buttonsHTML}</div></div>`;
+            card.innerHTML = `${tempDiv.innerHTML}<div class="product-card-content"><div class="product-card-header"><h3>${product.name || 'Unnamed Product'}</h3></div><p class="description">${product.description ? nl2br(htmlspecialchars_decode(product.description)) : 'No description available.'}</p><div class="price">${priceDisplay}</div><div class="product-actions">${buttonsHTML}</div></div>`;
             const buyNowButton = card.querySelector('.buy-now-card'); if (buyNowButton) { buyNowButton.addEventListener('click', (e) => { e.stopPropagation(); handleProductCardBuyNow(product.id); }); }
             const viewDetailsButton = card.querySelector('.view-details-card'); if (viewDetailsButton) { viewDetailsButton.addEventListener('click', (e) => { e.stopPropagation(); navigateTo('product', `${product.category}/${product.slug}`); }); }
             const titleElement = card.querySelector('h3'); if (titleElement) { titleElement.addEventListener('click', (e) => { e.stopPropagation(); navigateTo('product', `${product.category}/${product.slug}`); }); }
